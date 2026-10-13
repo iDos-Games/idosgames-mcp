@@ -1,0 +1,4 @@
+# Ключ подтверждения домена для mcp-publisher — НИКОГДА не коммитить.
+*.pem
+.mcpregistry_*
+node_modules/
