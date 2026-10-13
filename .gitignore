@@ -2,3 +2,4 @@
 *.pem
 .mcpregistry_*
 node_modules/
+mcp-publisher*
