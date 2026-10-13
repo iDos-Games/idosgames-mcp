@@ -1,153 +1,171 @@
-# MCP Registry
+<!-- mcp-name: com.idosgames/platform -->
+<!-- mcp-name: com.idosgames/sdk -->
 
-The MCP registry provides MCP clients with a list of MCP servers, like an app store for MCP servers.
+<p align="center">
+  <img src="assets/logo-400.png" width="120" alt="iDos Games" />
+</p>
 
-[**📤 Publish my MCP server**](docs/modelcontextprotocol-io/quickstart.mdx) | [**⚡️ Live API docs**](https://registry.modelcontextprotocol.io/docs) | [**👀 Ecosystem vision**](docs/design/ecosystem-vision.md) | 📖 **[Full documentation](./docs)**
+# iDos Games MCP
 
-## Development Status
+Official [Model Context Protocol](https://modelcontextprotocol.io) servers for
+[iDos Games](https://idosgames.com), a backend and publishing platform for web games. Connect them to Claude,
+ChatGPT, Cursor, VS Code, Codex or any other MCP client, and your AI assistant can build, configure and ship
+your games.
 
-**2025-10-24 update**: The Registry API has entered an **API freeze (v0.1)** 🎉. For the next month or more, the API will remain stable with no breaking changes, allowing integrators to confidently implement support. This freeze applies to v0.1 while development continues on v0. We'll use this period to validate the API in real-world integrations and gather feedback to shape v1 for general availability. Thank you to everyone for your contributions and patience—your involvement has been key to getting us here!
+There are two servers, and they do different jobs:
 
-**2025-09-08 update**: The registry has launched in preview 🎉 ([announcement blog post](https://blog.modelcontextprotocol.io/posts/2025-09-08-mcp-registry-preview/)). While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. A general availability (GA) release will follow later. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions/new?category=ideas) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016) ([joining details here](https://modelcontextprotocol.io/community/communication)).
+| | **iDos Games** (`com.idosgames/platform`) | **iDos Games SDK** (`com.idosgames/sdk`) |
+|---|---|---|
+| What it works on | Your live games: their **data** | Game **code** in your project |
+| Where it runs | Hosted: `https://site.idosgames.com/api/v2/mcp` | Locally: `npx -y @idosgames/mcp` |
+| Transport | Streamable HTTP | stdio |
+| Sign-in | OAuth 2.1, you pick the games and permissions | None (public, read-only) |
+| Works in browser-only clients (claude.ai, ChatGPT) | Yes | No, it needs a client that can start a local process |
 
-Registry Working Group:
-- **Radoslav (Rado) Dimitrov** (Stacklok) [@rdimitrov](https://github.com/rdimitrov) - WG Lead
-- **Tadas Antanavicius** (PulseMCP) [@tadasant](https://github.com/tadasant)
-- **Bob Dickinson** (TeamSpark) [@BobDickinson](https://github.com/BobDickinson)
-- **Preeti (Pree) Dewani** (Ravenmail) [@pree-dew](https://github.com/pree-dew)
+Rule of thumb: game code goes through the **SDK** server. A game's live config, generated assets, task board and
+builds go through the **iDos Games** server.
 
-## Contributing
+## iDos Games (hosted)
 
-We use multiple channels for collaboration - see [modelcontextprotocol.io/community/communication](https://modelcontextprotocol.io/community/communication).
+What your assistant can do with it:
 
-Often (but not always) ideas flow through this pipeline:
+- **Find your games** by name and see what it is allowed to do in each (`list_my_titles`).
+- **Read and update game configuration** section by section: virtual currencies, items, store, lootboxes,
+  quests, timed and co-op events, seasons, leaderboards, crafting, rewards, premium, tutorials, A/B
+  experiments, localization, chat, multiplayer, push, advertising and more (`get_<section>` / `save_<section>`).
+  Each section is saved on its own, so the rest of the configuration stays untouched.
+- **Title data and localization keys**: the game's shared key-value data and its text keys.
+- **Server logic**: publish CloudCode, and list secret names (values are never returned).
+- **Generate assets with AI**: images, speech and sound, music, short videos, 3D models and text. Generation
+  spends your account's credits, so the assistant can check `list_ai_tiers` and `estimate_media_cost` before
+  running it.
+- **Task board**: projects, columns, cards, assignees and comments.
+- **Ship builds**: upload a ready web build, get a test link, then put it live for players.
 
-- **[Discord](https://modelcontextprotocol.io/community/communication)** - Real-time community discussions
-- **[Discussions](https://github.com/modelcontextprotocol/registry/discussions)** - Propose and discuss product/technical requirements
-- **[Issues](https://github.com/modelcontextprotocol/registry/issues)** - Track well-scoped technical work  
-- **[Pull Requests](https://github.com/modelcontextprotocol/registry/pulls)** - Contribute work towards issues
+Every tool has a `title` and `readOnlyHint` / `destructiveHint` / `openWorldHint` annotations.
 
-### Quick start:
+### How sign-in works
 
-#### Pre-requisites
+Add the server as a plain HTTP MCP server with **no headers and no API key**. `initialize` and `tools/list`
+need no sign-in. The first tool call answers `401`, your client opens the iDos Games sign-in page, and you pick
+which games the assistant may use and what it may do in each (read config, write config, generate assets,
+upload builds…). The client then repeats the call. You can revoke access at any time in **Connected apps** on
+[platform.idosgames.com](https://platform.idosgames.com).
 
-- **Docker**
-- **Go 1.24.x**
-- **ko** - Container image builder for Go ([installation instructions](https://ko.build/install/))
-- **golangci-lint v2.4.0**
+### Connect
 
-#### Running the server
+**Claude (claude.ai, Desktop, mobile)**: Settings → Connectors → *Add custom connector* →
+`https://site.idosgames.com/api/v2/mcp`.
 
-```bash
-# Start full development environment
-make dev-compose
-```
-
-This starts the registry at [`localhost:8080`](http://localhost:8080) with PostgreSQL. The database uses ephemeral storage and is reset each time you restart the containers, ensuring a clean state for development and testing.
-
-**Note:** The registry uses [ko](https://ko.build) to build container images. The `make dev-compose` command automatically builds the registry image with ko and loads it into your local Docker daemon before starting the services.
-
-By default, the registry seeds from the production API with a filtered subset of servers (to keep startup fast). This ensures your local environment mirrors production behavior and all seed data passes validation. For offline development you can seed from a file without validation with `MCP_REGISTRY_SEED_FROM=data/seed.json MCP_REGISTRY_ENABLE_REGISTRY_VALIDATION=false make dev-compose`.
-
-The setup can be configured with environment variables in [docker-compose.yml](./docker-compose.yml) - see [.env.example](./.env.example) for a reference.
-
-<details>
-<summary>Alternative: Running a pre-built Docker image</summary>
-
-Pre-built Docker images are automatically published to GitHub Container Registry. Note that the image does not bundle PostgreSQL, so you need to run your own and point the registry at it via `MCP_REGISTRY_DATABASE_URL` (see [docker-compose.yml](./docker-compose.yml) for a working example):
-
-```bash
-# Run latest stable release
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:latest
-
-# Run latest from main branch (continuous deployment)
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main
-
-# Run specific release version
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:v1.0.0
-
-# Run development build from main branch
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main-20250906-abc123d
-```
-
-**Available tags:** 
-- **Releases**: `latest`, `v1.0.0`, `v1.1.0`, etc.
-- **Continuous**: `main` (latest main branch build)
-- **Development**: `main-<date>-<sha>` (specific commit builds)
-
-</details>
-
-#### Publishing a server
-
-To publish a server, we've built a simple CLI. You can use it with:
+**Claude Code**
 
 ```bash
-# Build the latest CLI
-make publisher
-
-# Use it!
-./bin/mcp-publisher --help
+claude mcp add --transport http idosgames https://site.idosgames.com/api/v2/mcp
 ```
 
-See [the publisher guide](./docs/modelcontextprotocol-io/quickstart.mdx) for more details.
+**ChatGPT**: Settings → Apps & Connectors → Advanced → Developer mode → *Create*, URL
+`https://site.idosgames.com/api/v2/mcp`, authentication **OAuth**.
 
-#### Other commands
+**Codex CLI**
 
 ```bash
-# Run lint, unit tests and integration tests
-make check
+codex mcp add idosgames --url https://site.idosgames.com/api/v2/mcp
 ```
 
-There are also a few more helpful commands for development. Run `make help` to learn more, or look in [Makefile](./Makefile).
+**Gemini CLI**
 
-<!--
-For Claude and other AI tools: Always prefer make targets over custom commands where possible.
--->
-
-## Architecture
-
-### Project Structure
-
-```
-├── cmd/                     # Application entry points
-│   └── publisher/           # Server publishing tool
-├── data/                    # Seed data
-├── deploy/                  # Deployment configuration (Pulumi)
-├── docs/                    # Documentation
-├── internal/                # Private application code
-│   ├── api/                 # HTTP handlers and routing
-│   ├── auth/                # Authentication (GitHub OAuth, JWT, namespace blocking)
-│   ├── config/              # Configuration management
-│   ├── database/            # Data persistence (PostgreSQL)
-│   ├── service/             # Business logic
-│   ├── telemetry/           # Metrics and monitoring
-│   └── validators/          # Input validation
-├── pkg/                     # Public packages
-│   ├── api/                 # API types and structures
-│   │   └── v0/              # Version 0 API types
-│   └── model/               # Data models for server.json
-├── scripts/                 # Development and testing scripts
-├── tests/                   # Integration tests
-└── tools/                   # CLI tools and utilities
-    └── validate-*.sh        # Schema validation tools
+```bash
+gemini mcp add --transport http idosgames https://site.idosgames.com/api/v2/mcp
 ```
 
-### Authentication
+**Cursor** (`.cursor/mcp.json`), **Windsurf** (`~/.codeium/windsurf/mcp_config.json`, key `serverUrl`),
+**VS Code** (`.vscode/mcp.json`): see [Both servers in one config](#both-servers-in-one-config).
 
-Publishing supports multiple authentication methods:
-- **GitHub OAuth** - For publishing by logging into GitHub
-- **GitHub OIDC** - For publishing from GitHub Actions
-- **DNS verification** - For proving ownership of a domain and its subdomains
-- **HTTP verification** - For proving ownership of a domain
+## iDos Games SDK (local)
 
-The registry validates namespace ownership when publishing. E.g. to publish...:
-- `io.github.domdomegg/my-cool-mcp` you must login to GitHub as `domdomegg`, or be in a GitHub Action on domdomegg's repos
-- `me.adamjones/my-cool-mcp` you must prove ownership of `adamjones.me` via DNS or HTTP challenge
+Serves the iDos Games **Module & Skills Registry** to coding agents:
 
-## Community Projects
+| Tool | Purpose |
+|---|---|
+| `list_modules` | Catalog of composable game modules (games and systems: store, quests, inventory, leaderboard…) |
+| `get_module` | One module's full source and install instructions |
+| `get_host_scaffold` | The base every new project starts from (sign-in, lobby, config) |
+| `get_manifest` | Runtime `@idosgames/*` packages and their exact versions |
+| `list_skills` / `get_skill` | How to code against `@idosgames/core`, the module contract and composition |
+| `search` | Find a ready module by the feature you need |
 
-Check out [community projects](docs/community-projects.md) to explore notable registry-related work created by the community.
+All tools are read-only and return content. The agent writes the files into its own project. The registry is
+bundled in the package, so it also works offline.
 
-## More documentation
+```bash
+claude mcp add idosgames-sdk -- npx -y @idosgames/mcp
+```
 
-See the [documentation](./docs) for more details if your question has not been answered here!
+npm: [`@idosgames/mcp`](https://www.npmjs.com/package/@idosgames/mcp).
+
+## Both servers in one config
+
+Cursor, `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "idosgames": { "url": "https://site.idosgames.com/api/v2/mcp" },
+    "idosgames-sdk": { "command": "npx", "args": ["-y", "@idosgames/mcp"] }
+  }
+}
+```
+
+VS Code, `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "idosgames": { "type": "http", "url": "https://site.idosgames.com/api/v2/mcp" },
+    "idosgames-sdk": { "type": "stdio", "command": "npx", "args": ["-y", "@idosgames/mcp"] }
+  }
+}
+```
+
+Windsurf, `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "idosgames": { "serverUrl": "https://site.idosgames.com/api/v2/mcp" },
+    "idosgames-sdk": { "command": "npx", "args": ["-y", "@idosgames/mcp"] }
+  }
+}
+```
+
+Claude Code, `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "idosgames": { "type": "http", "url": "https://site.idosgames.com/api/v2/mcp" },
+    "idosgames-sdk": { "command": "npx", "args": ["-y", "@idosgames/mcp"] }
+  }
+}
+```
+
+## Example prompts
+
+- "Show the virtual currencies and store items configured for my game."
+- "Add a daily quest that rewards 100 gold for winning 3 matches."
+- "Generate a 512×512 icon for a fire sword and add it to the item catalog."
+- "Start a new idle RPG project with a store and daily quests." (SDK server)
+- "Build the game and upload it as a test version." (both servers)
+- "What tasks are assigned to me on my board?"
+
+## Links
+
+- Documentation: [idosgames.com/mcp](https://idosgames.com/mcp)
+- Support: [idosgames.com/mcp#support](https://idosgames.com/mcp#support), help@idos.games
+- Privacy policy: [idosgames.com/privacy](https://idosgames.com/privacy)
+- Terms: [idosgames.com/terms](https://idosgames.com/terms)
+
+## License
+
+The SDK server (`@idosgames/mcp`) is MIT-licensed; see [LICENSE](LICENSE). The hosted iDos Games server is a
+service covered by the iDos Games [terms](https://idosgames.com/terms).
