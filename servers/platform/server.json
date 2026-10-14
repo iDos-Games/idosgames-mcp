@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.idosgames/platform",
   "title": "iDos Games",
-  "description": "Configure cross-platform and web3 games on iDos Games: live config, tokens, AI assets, builds.",
-  "version": "1.1.1",
+  "description": "Configure cross-platform and web3 games on iDos Games: live config, tokens, NFTs, AI assets, builds.",
+  "version": "1.1.2",
   "websiteUrl": "https://idosgames.com/mcp",
   "repository": {
     "url": "https://github.com/iDos-Games/idosgames-mcp",

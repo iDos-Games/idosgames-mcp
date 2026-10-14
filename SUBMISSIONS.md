@@ -27,9 +27,9 @@
 | Поле | Текст |
 |---|---|
 | Name | `iDos Games` (SDK: `iDos Games SDK`) |
-| Short (≤100) | `Configure cross-platform and web3 games on iDos Games: live config, tokens, AI assets, builds.` |
+| Short (≤100) | `Configure cross-platform and web3 games on iDos Games: live config, tokens, NFTs, AI assets, builds.` |
 | Short SDK (≤100) | `Game modules, project scaffold and SDK skills for building web games on iDos Games.` |
-| One-liner (≤200) | `Let your AI assistant run your cross-platform and web3 games on iDos Games: live config, on-chain tokens, AI images, audio, video and 3D, task board and builds.` |
+| One-liner (≤200) | `Let your AI assistant run your cross-platform and web3 games on iDos Games: live config, tokens and NFTs, AI images, audio, video and 3D, task board and builds.` |
 | Categories | Game Development; Developer Tools |
 | Tags | games, game-backend, liveops, game-config, ai-assets, gamedev, web3, blockchain |
 | URL сервера | `https://site.idosgames.com/api/v2/mcp` (Streamable HTTP, OAuth 2.1) |
@@ -48,7 +48,7 @@ iDos Games is a backend and publishing platform for cross-platform games (web, A
 What it can do:
 - Find your games by name and see what the assistant is allowed to do in each.
 - Read and update a game's configuration: virtual currencies, item catalog, store, lootboxes, quests, timed and co-op events, seasons, leaderboards, crafting, rewards, tutorials, A/B experiments and more.
-- Web3: game currencies as on-chain tokens on EVM networks and Solana, contract addresses, supported networks and gas policy. Each section is saved on its own, the rest of the configuration stays untouched.
+- Web3: game currencies as on-chain tokens and items as NFTs on EVM networks and Solana; player deposits and withdrawals through the reward pool; token-gated play and wallet login; networks, contract addresses and gas policy. Each section is saved on its own, the rest of the configuration stays untouched.
 - Manage the game's shared key-value data and its localization keys.
 - Publish server-side game logic (CloudCode).
 - Generate assets with AI: images, speech, music, short videos, 3D models and text (billed to your account's credits; the assistant can check the price first).
@@ -120,7 +120,7 @@ cd ../sdk && mcp-publisher publish   # только ПОСЛЕ npm 0.1.34: ре�
 Строка для awesome-mcp-servers:
 
 ```
-- [iDos-Games/idosgames-mcp](https://github.com/iDos-Games/idosgames-mcp) 🎖️ 📇 ☁️ 🏠 - Official iDos Games servers: configure live cross-platform games (web, Android, iOS, PC): currencies, on-chain tokens on EVM and Solana, store, quests, events, leaderboards; generate AI assets, manage the task board and ship builds; plus game modules and SDK skills for coding agents.
+- [iDos-Games/idosgames-mcp](https://github.com/iDos-Games/idosgames-mcp) 🎖️ 📇 ☁️ 🏠 - Official iDos Games servers for cross-platform games (web, Android, iOS, PC) with web3: configure currencies, store, quests, events and leaderboards, on-chain tokens and NFT items on EVM and Solana (reward-pool deposits and withdrawals, token-gated play, wallet login); generate AI assets, manage the task board and ship builds; plus game modules and SDK skills for coding agents.
 ```
 
 ## 6. Средние и небольшие
