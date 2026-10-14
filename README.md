@@ -8,7 +8,7 @@
 # iDos Games MCP
 
 Official [Model Context Protocol](https://modelcontextprotocol.io) servers for
-[iDos Games](https://idosgames.com), a backend and publishing platform for web games. Connect them to Claude,
+[iDos Games](https://idosgames.com), a backend and publishing platform for cross-platform games (web, Android, iOS, PC) with web3 support. Connect them to Claude,
 ChatGPT, Cursor, VS Code, Codex or any other MCP client, and your AI assistant can build, configure and ship
 your games.
 
@@ -34,6 +34,8 @@ What your assistant can do with it:
   quests, timed and co-op events, seasons, leaderboards, crafting, rewards, premium, tutorials, A/B
   experiments, localization, chat, multiplayer, push, advertising and more (`get_<section>` / `save_<section>`).
   Each section is saved on its own, so the rest of the configuration stays untouched.
+- **Web3**: game currencies as on-chain tokens on EVM networks and Solana, contract addresses, supported
+  networks and gas policy (`get_blockchain` / `save_blockchain`, crypto currencies in `save_currency`).
 - **Title data and localization keys**: the game's shared key-value data and its text keys.
 - **Server logic**: publish CloudCode, and list secret names (values are never returned).
 - **Generate assets with AI**: images, speech and sound, music, short videos, 3D models and text. Generation
