@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "idosgames": {
+      "url": "https://site.idosgames.com/api/v2/mcp"
+    }
+  }
+}
