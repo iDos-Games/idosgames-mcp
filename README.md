@@ -16,14 +16,15 @@ There are two servers, and they do different jobs:
 
 | | **iDos Games** (`com.idosgames/platform`) | **iDos Games SDK** (`com.idosgames/sdk`) |
 |---|---|---|
-| What it works on | Your live games: their **data** | Game **code** in your project |
+| What it works on | Your live games: their **data**; plus the game modules and SDK skills | Game **code** in your project: modules and skills, offline |
 | Where it runs | Hosted: `https://site.idosgames.com/api/v2/mcp` | Locally: `npx -y @idosgames/mcp` |
 | Transport | Streamable HTTP | stdio |
-| Sign-in | OAuth 2.1, you pick the games and permissions | None (public, read-only) |
+| Sign-in | OAuth 2.1, you pick the games and permissions (modules and skills work without it) | None (public, read-only) |
 | Works in browser-only clients (claude.ai, ChatGPT) | Yes | No, it needs a client that can start a local process |
 
-Rule of thumb: game code goes through the **SDK** server. A game's live config, generated assets, task board and
-builds go through the **iDos Games** server.
+Both serve the same catalog of game modules, the project scaffold and SDK skills, so a browser-only client
+(claude.ai, ChatGPT) gets them from the hosted server. A game's live config, generated assets, task board and
+builds go only through the **iDos Games** server; the **SDK** server needs no sign-in and works offline.
 
 ## iDos Games (hosted)
 
@@ -45,6 +46,10 @@ What your assistant can do with it:
   running it.
 - **Task board**: projects, columns, cards, assignees and comments.
 - **Ship builds**: upload a ready web build, get a test link, then put it live for players.
+- **Game modules and SDK skills** (read-only, no game needed): the project scaffold (`get_host_scaffold`), ready
+  games and systems such as store, quests, inventory, leaderboard and multiplayer (`list_modules`,
+  `search_modules`, `get_module`), exact SDK package versions (`get_manifest`) and how-to skills for the SDK
+  (`list_skills`, `get_skill`).
 
 Every tool has a `title` and `readOnlyHint` / `destructiveHint` / `openWorldHint` annotations.
 
