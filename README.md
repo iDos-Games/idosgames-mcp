@@ -34,8 +34,10 @@ What your assistant can do with it:
   quests, timed and co-op events, seasons, leaderboards, crafting, rewards, premium, tutorials, A/B
   experiments, localization, chat, multiplayer, push, advertising and more (`get_<section>` / `save_<section>`).
   Each section is saved on its own, so the rest of the configuration stays untouched.
-- **Web3**: game currencies as on-chain tokens on EVM networks and Solana, contract addresses, supported
-  networks and gas policy (`get_blockchain` / `save_blockchain`, crypto currencies in `save_currency`).
+- **Web3**: game currencies as on-chain tokens and items as NFTs on EVM networks and Solana, player deposits
+  and withdrawals through the reward pool, token-gated play and wallet login, networks, contract addresses and
+  gas policy (`get_blockchain` / `save_blockchain`, crypto currencies in `save_currency`, NFT items in
+  `save_item`). Token launch and holder staking live on idosgames.com itself.
 - **Title data and localization keys**: the game's shared key-value data and its text keys.
 - **Server logic**: publish CloudCode, and list secret names (values are never returned).
 - **Generate assets with AI**: images, speech and sound, music, short videos, 3D models and text. Generation
