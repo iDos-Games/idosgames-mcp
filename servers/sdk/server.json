@@ -3,7 +3,7 @@
   "name": "com.idosgames/sdk",
   "title": "iDos Games SDK",
   "description": "Game modules, project scaffold and SDK skills for building web games on iDos Games.",
-  "version": "0.1.34",
+  "version": "0.1.36",
   "websiteUrl": "https://idosgames.com/mcp",
   "repository": {
     "url": "https://github.com/iDos-Games/idosgames-mcp",
@@ -20,7 +20,7 @@
     {
       "registryType": "npm",
       "identifier": "@idosgames/mcp",
-      "version": "0.1.34",
+      "version": "0.1.36",
       "transport": {
         "type": "stdio"
       }
