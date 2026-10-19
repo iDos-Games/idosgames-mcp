@@ -77,8 +77,14 @@ cd servers/platform && mcp-publisher publish
 cd ../sdk && mcp-publisher publish   # только ПОСЛЕ npm 0.1.34: реестр сверяет mcpName в опубликованном пакете
 ```
 
-Любая правка текста позже — поднять `version` в нужном `server.json` (хотя бы патч) и снова `mcp-publisher publish`.
+Любая правка текста позже — поднять `version` в нужном `server.json` (хотя бы патч) и запушить в `main`.
 Для sdk `version` = версия npm-пакета.
+
+**С 20.10.2026 публикует GitHub Action** (`.github/workflows/publish-registry.yml`): пуш в `main` с изменённым
+`servers/*/server.json` → публикуется каждая запись, чьей версии в реестре ещё нет (`scripts/registry-plan.mjs`),
+уже опубликованные пропускаются; для sdk он до 15 минут ждёт пакет в npm. Ручные шаги 4–5 выше больше не нужны.
+Нужен секрет репозитория `MCP_PRIVATE_KEY` — значение, которое шаг 4 подставлял в `--private-key` (hex из `key.pem`).
+Запустить заново без пуша — Actions → Publish to MCP Registry → Run workflow.
 
 ## 3. Каталог коннекторов Claude — https://claude.ai/directory/manage → Submit new → MCP connector
 

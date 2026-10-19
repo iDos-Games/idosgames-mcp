@@ -1,0 +1,75 @@
+# Публикация записей в Official MCP Registry при пуше в main (решение владельца 20.10.2026).
+#
+# Публикуется каждая servers/*/server.json, чьей версии в реестре ещё нет; уже опубликованные
+# пропускаются, поэтому пуш без смены версии ничего не делает. Порядок релиза SDK не меняется:
+# `npm run release` в iDosGamesSDK_TS → коммит с новой версией здесь → пуш в main. Если пуш
+# случился раньше релиза, workflow до 15 минут ждёт пакет в npm.
+#
+# Нужен секрет репозитория MCP_PRIVATE_KEY — ключ подтверждения домена idosgames.com в hex
+# (то же значение, что раньше подставлялось в `mcp-publisher login dns` из key.pem).
+name: Publish to MCP Registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "servers/*/server.json"
+      - ".github/workflows/publish-registry.yml"
+      - "scripts/registry-plan.mjs"
+  workflow_dispatch: {}
+
+concurrency:
+  group: mcp-registry
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MCP_PUBLISHER_VERSION: "1.8.1"
+      # sha256 из registry_1.8.1_checksums.txt релиза modelcontextprotocol/registry
+      MCP_PUBLISHER_SHA256: "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install mcp-publisher (pinned + checksum)
+        run: |
+          curl -fsSL -o mcp-publisher.tar.gz \
+            "https://github.com/modelcontextprotocol/registry/releases/download/v${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz"
+          echo "${MCP_PUBLISHER_SHA256}  mcp-publisher.tar.gz" | sha256sum -c -
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+          ./mcp-publisher --version
+
+      - name: Publish new versions
+        env:
+          MCP_PRIVATE_KEY: ${{ secrets.MCP_PRIVATE_KEY }}
+        run: |
+          set -u
+          if [ -z "${MCP_PRIVATE_KEY}" ]; then
+            echo "::error::Secret MCP_PRIVATE_KEY is not set (Settings → Secrets and variables → Actions)"
+            exit 1
+          fi
+
+          logged_in=0
+          for file in servers/*/server.json; do
+            dir="$(dirname "$file")"
+            set +e
+            node scripts/registry-plan.mjs "$file"
+            plan=$?
+            set -e
+            if [ "$plan" -eq 10 ]; then continue; fi
+            if [ "$plan" -ne 0 ]; then echo "::error::$file: cannot decide (see above)"; exit 1; fi
+
+            if [ "$logged_in" -eq 0 ]; then
+              ./mcp-publisher login dns --domain idosgames.com --private-key "${MCP_PRIVATE_KEY}"
+              logged_in=1
+            fi
+            (cd "$dir" && ../../mcp-publisher publish)
+          done
