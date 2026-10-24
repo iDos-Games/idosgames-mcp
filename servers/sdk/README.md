@@ -3,8 +3,10 @@
 Source of the npm package [`@idosgames/mcp`](https://www.npmjs.com/package/@idosgames/mcp): a local (stdio) MCP
 server that gives AI coding agents the iDos Games game modules, the host scaffold and SDK skills.
 
-- `src/server.ts` — the 7 tools (`list_modules`, `get_module`, `list_skills`, `get_skill`, `get_host_scaffold`,
-  `get_manifest`, `search`), all read-only.
+- `src/server.ts` — the 9 tools (`list_modules`, `get_module`, `list_skills`, `get_skill`, `get_host_scaffold`,
+  `get_manifest`, `search`, `validate_asset`, `validate_video`), all read-only.
+- `src/video.ts` — `validate_asset` / `validate_video`: the video studio's own checks from
+  [`@idosgames/timeline`](https://www.npmjs.com/package/@idosgames/timeline), bundled into `dist/` (free, offline).
 - `src/registry.ts` — reads the registry from the bundled `registry/` folder, a local folder
   (`IDOSGAMES_REGISTRY_DIR`) or a URL (`IDOSGAMES_REGISTRY_URL`).
 - `src/cli.ts` — stdio entry point.

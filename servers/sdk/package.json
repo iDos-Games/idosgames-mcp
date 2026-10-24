@@ -1,6 +1,7 @@
 {
   "name": "@idosgames/mcp",
-  "version": "0.1.37",
+  "version": "0.1.38",
+  "packageManager": "npm@11.17.0",
   "mcpName": "com.idosgames/sdk",
   "description": "MCP server that serves the iDosGames Module & Skills Registry to AI coding agents (Claude Code, Codex, Cursor…): list/pull composable game modules and the host scaffold, and load skills for @idosgames/core, the module contract, and composition.",
   "type": "module",
@@ -42,6 +43,7 @@
     "@modelcontextprotocol/sdk": "^1.12.0"
   },
   "devDependencies": {
+    "@idosgames/timeline": "^0.1.0",
     "@types/node": "^22.0.0",
     "tsup": "^8.3.5",
     "typescript": "^5.9.3"

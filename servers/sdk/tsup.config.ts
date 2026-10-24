@@ -21,5 +21,9 @@ export default defineConfig({
   banner: { js: "#!/usr/bin/env node" },
   // The MCP SDK resolves from node_modules at runtime (declared dependency) — don't bundle it.
   external: ["@modelcontextprotocol/sdk"],
+  // Проверка роликов (validate_asset / validate_video) — код @idosgames/timeline и /characters, вшитый в
+  // сборку: тот же валидатор, что у игроков, без зависимостей в рантайме. three в нужные пути не попадает
+  // (sideEffects: false у обоих пакетов), поэтому он внешний — на случай, если ссылка всё же останется.
+  noExternal: ["@idosgames/timeline", "@idosgames/characters"],
   define: { __MCP_VERSION__: JSON.stringify(version) },
 });
