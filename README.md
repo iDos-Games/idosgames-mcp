@@ -50,6 +50,13 @@ What your assistant can do with it:
   games and systems such as store, quests, inventory, leaderboard and multiplayer (`list_modules`,
   `search_modules`, `get_module`), exact SDK package versions (`get_manifest`) and how-to skills for the SDK
   (`list_skills`, `get_skill`).
+- **Video studio catalog** (read-only, no game needed): the formats of short videos and everything a video can
+  name (`list_video_formats`, `get_video_format`), the library of ready characters, scenes and music
+  (`search_assets`) and complete example videos (`list_video_templates`).
+- **Write videos for the video studio** (paid with credits): `plan_video` turns an idea into a ready video by the
+  studio's AI director, `generate_asset` makes a character, scene, prop or music for it and puts it in its place.
+  The answer is the video package (`{ spec, assets }`) and a link that opens it in the app's editor; the MP4 is
+  made on the player's device. `publish_asset` puts the assets into the app's Workshop as its official content.
 
 Every tool has a `title` and `readOnlyHint` / `destructiveHint` / `openWorldHint` annotations.
 
@@ -102,6 +109,7 @@ Serves the iDos Games **Module & Skills Registry** to coding agents:
 | `get_manifest` | Runtime `@idosgames/*` packages and their exact versions |
 | `list_skills` / `get_skill` | How to code against `@idosgames/core`, the module contract and composition |
 | `search` | Find a ready module by the feature you need |
+| `validate_asset` / `validate_video` | Check a video-studio asset or video package with the studio's own code; with `title_id` — the link that opens the video in the app |
 
 All tools are read-only and return content. The agent writes the files into its own project. The registry is
 bundled in the package, so it also works offline.

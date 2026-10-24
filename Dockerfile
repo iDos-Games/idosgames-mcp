@@ -4,7 +4,7 @@
 FROM node:22-alpine
 
 ENV NODE_ENV=production
-RUN npm install -g @idosgames/mcp@0.1.34 && npm cache clean --force
+RUN npm install -g @idosgames/mcp@0.1.38 && npm cache clean --force
 
 USER node
 ENTRYPOINT ["idosgames-mcp"]

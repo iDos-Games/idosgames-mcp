@@ -12,6 +12,7 @@ import {
   getSkill,
   moduleExportName,
 } from "./registry.js";
+import { callVideoTool, VIDEO_TOOLS } from "./video.js";
 
 // Injected at build time from package.json (tsup.config.ts `define`). Run from source (tests, tsx) it
 // is absent — hence the fallback instead of a ReferenceError.
@@ -124,6 +125,7 @@ const TOOLS: Tool[] = [
       required: ["query"],
     },
   },
+  ...VIDEO_TOOLS,
 ];
 
 const json = (value: unknown): CallToolResult => ({
@@ -149,6 +151,7 @@ const SERVER_INSTRUCTIONS = [
   "get_host_scaffold (the host shell for a new project), list_modules / search / get_module (composable",
   "game/app module source you write under src/modules/{id}/), get_manifest (exact @idosgames/* runtime",
   "versions), and list_skills / get_skill (how to code against @idosgames/core and the module contract).",
+  "validate_asset / validate_video check a video-studio asset or video package with the studio's own code (free, offline).",
   "It does NOT read or change any live Title's data.",
   "To configure a live Title's settings (TitlePublicConfiguration) or generate assets",
   "(image / audio / 3D / video / text), that is a SEPARATE server — the iDosGames Title-configuration MCP:",
@@ -261,8 +264,11 @@ export function createServer(): Server {
           );
           return json({ modules, skills });
         }
-        default:
+        default: {
+          const video = await callVideoTool(name, args);
+          if (video) return video.ok ? json(video.value) : fail(video.error);
           return fail(`Unknown tool: ${name}`);
+        }
       }
     } catch (err) {
       return fail(err instanceof Error ? err.message : String(err));
