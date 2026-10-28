@@ -50,3 +50,4 @@ from the CDN instead of the copy bundled in the package. The value is a base URL
 
 - SDK: call `list_modules`. It returns a non-empty list of modules.
 - Hosted: call `list_my_titles`. After sign-in it returns the games the user shared with the assistant.
+- Hosted, with the "Create new apps" permission: `create_title` with a `name` creates a game; the next `list_my_titles` shows it.

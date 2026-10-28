@@ -31,6 +31,9 @@ builds go only through the **iDos Games** server; the **SDK** server needs no si
 What your assistant can do with it:
 
 - **Find your games** by name and see what it is allowed to do in each (`list_my_titles`).
+- **Create a new game** (`create_title`, its own permission): the same way the dashboard does, it takes a slot of
+  your plan and gets the base systems, a game module, a ready starter build and a sandbox (DEV) copy. The new game
+  joins the assistant's access at once, so it can configure and ship it next.
 - **Read and update game configuration** section by section: virtual currencies, items, store, lootboxes,
   quests, timed and co-op events, seasons, leaderboards, crafting, rewards, premium, tutorials, A/B
   experiments, localization, chat, multiplayer, push, advertising and more (`get_<section>` / `save_<section>`).
@@ -58,14 +61,15 @@ What your assistant can do with it:
   The answer is the video package (`{ spec, assets }`) and a link that opens it in the app's editor; the MP4 is
   made on the player's device. `publish_asset` puts the assets into the app's Workshop as its official content.
 
-Every tool has a `title` and `readOnlyHint` / `destructiveHint` / `openWorldHint` annotations.
+Every tool has a `title` and `readOnlyHint` / `destructiveHint` / `openWorldHint` annotations; `create_title`
+also says `idempotentHint: false` (every successful call is another game).
 
 ### How sign-in works
 
 Add the server as a plain HTTP MCP server with **no headers and no API key**. `initialize` and `tools/list`
 need no sign-in. The first tool call answers `401`, your client opens the iDos Games sign-in page, and you pick
 which games the assistant may use and what it may do in each (read config, write config, generate assets,
-upload builds…). The client then repeats the call. You can revoke access at any time in **Connected apps** on
+upload builds…), and whether it may create new games. The client then repeats the call. You can revoke access at any time in **Connected apps** on
 [platform.idosgames.com](https://platform.idosgames.com).
 
 ### Connect
@@ -168,6 +172,7 @@ Claude Code, `.mcp.json`:
 
 ## Example prompts
 
+- "Create a new idle RPG called Moon Farm and give it three currencies."
 - "Show the virtual currencies and store items configured for my game."
 - "Add a daily quest that rewards 100 gold for winning 3 matches."
 - "Generate a 512×512 icon for a fire sword and add it to the item catalog."
