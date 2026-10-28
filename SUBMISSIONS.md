@@ -27,7 +27,7 @@
 | Поле | Текст |
 |---|---|
 | Name | `iDos Games` (SDK: `iDos Games SDK`) |
-| Short (≤100) | `Configure cross-platform and web3 games on iDos Games: live config, tokens, NFTs, AI assets, builds.` |
+| Short (≤100) | `Create and configure cross-platform and web3 games on iDos Games: config, tokens, NFTs, AI, builds.` |
 | Short SDK (≤100) | `Game modules, project scaffold and SDK skills for building web games on iDos Games.` |
 | One-liner (≤200) | `Let your AI assistant run your cross-platform and web3 games on iDos Games: live config, tokens and NFTs, AI images, audio, video and 3D, task board and builds.` |
 | Categories | Game Development; Developer Tools |
@@ -47,6 +47,7 @@ iDos Games is a backend and publishing platform for cross-platform games (web, A
 
 What it can do:
 - Find your games by name and see what the assistant is allowed to do in each.
+- Create a new game the way the dashboard does (separate permission): it takes a slot of your plan, gets a ready starter build and a sandbox copy, and joins the assistant's access at once.
 - Read and update a game's configuration: virtual currencies, item catalog, store, lootboxes, quests, timed and co-op events, seasons, leaderboards, crafting, rewards, tutorials, A/B experiments and more.
 - Web3: game currencies as on-chain tokens and items as NFTs on EVM networks and Solana; player deposits and withdrawals through the reward pool; token-gated play and wallet login; networks, contract addresses and gas policy. Each section is saved on its own, the rest of the configuration stays untouched.
 - Manage the game's shared key-value data and its localization keys.
