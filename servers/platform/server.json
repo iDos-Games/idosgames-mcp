@@ -3,7 +3,7 @@
   "name": "com.idosgames/platform",
   "title": "iDos Games",
   "description": "Create and configure cross-platform and web3 games on iDos Games: config, tokens, NFTs, AI, builds.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "websiteUrl": "https://idosgames.com/mcp",
   "repository": {
     "url": "https://github.com/iDos-Games/idosgames-mcp",
