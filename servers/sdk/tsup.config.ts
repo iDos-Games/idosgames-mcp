@@ -20,7 +20,7 @@ export default defineConfig({
   // Executable entry: prepend a shebang so the published bin runs directly.
   banner: { js: "#!/usr/bin/env node" },
   // The MCP SDK resolves from node_modules at runtime (declared dependency) — don't bundle it.
-  external: ["@modelcontextprotocol/sdk"],
+  external: ["@modelcontextprotocol/sdk", "@idosgames/token", "ethers", "@solana/web3.js", "bn.js"],
   // Проверка роликов (validate_asset / validate_video) — код @idosgames/timeline и /characters, вшитый в
   // сборку: тот же валидатор, что у игроков, без зависимостей в рантайме. three в нужные пути не попадает
   // (sideEffects: false у обоих пакетов), поэтому он внешний — на случай, если ссылка всё же останется.

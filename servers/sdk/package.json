@@ -1,9 +1,8 @@
 {
   "name": "@idosgames/mcp",
-  "version": "0.1.55",
-  "packageManager": "npm@11.17.0",
+  "version": "0.1.56",
   "mcpName": "com.idosgames/sdk",
-  "description": "MCP server that serves the iDosGames Module & Skills Registry to AI coding agents (Claude Code, Codex, Cursor…): list/pull composable game modules and the host scaffold, and load skills for @idosgames/core, the module contract, and composition.",
+  "description": "MCP server that serves the iDosGames Module & Skills Registry to AI coding agents (Claude Code, Codex, Cursor…): list/pull composable game modules and the host scaffold, and load skills for @idosgames/core, the module contract, and composition; plus token launch and trade for game tokens from a local wallet key (EVM Uniswap V4 and Solana).",
   "type": "module",
   "license": "MIT",
   "author": "iDos Games",
@@ -36,17 +35,19 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup",
+    "sync:registry": "node ../../scripts/sync-registry.mjs",
+    "build": "npm run sync:registry && tsup",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
+  "//": "The registry is bundled into the package (registry/) so `npx @idosgames/mcp` works offline. Set IDOSGAMES_REGISTRY_URL to serve a hosted registry instead (once cloud.idosgames.com/registry is live).",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0"
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@idosgames/token": "^0.1.0",
+    "@solana/web3.js": "^1.98.4",
+    "bn.js": "^5.2.2",
+    "ethers": "^6.13.5"
   },
   "devDependencies": {
-    "@idosgames/timeline": "^0.1.0",
-    "@types/node": "^22.0.0",
-    "three": "0.185.1",
-    "tsup": "^8.3.5",
-    "typescript": "^5.9.3"
+    "@idosgames/timeline": "^0.1.0"
   }
 }

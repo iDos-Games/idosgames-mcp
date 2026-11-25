@@ -12,6 +12,7 @@ import {
   getSkill,
   moduleExportName,
 } from "./registry.js";
+import { callTokenTool, TOKEN_TOOLS } from "./token.js";
 import { callVideoTool, VIDEO_TOOLS } from "./video.js";
 
 // Injected at build time from package.json (tsup.config.ts `define`). Run from source (tests, tsx) it
@@ -126,6 +127,7 @@ const TOOLS: Tool[] = [
     },
   },
   ...VIDEO_TOOLS,
+  ...TOKEN_TOOLS,
 ];
 
 const json = (value: unknown): CallToolResult => ({
@@ -267,6 +269,8 @@ export function createServer(): Server {
         default: {
           const video = await callVideoTool(name, args);
           if (video) return video.ok ? json(video.value) : fail(video.error);
+          const token = await callTokenTool(name, args);
+          if (token) return token.ok ? json(token.value) : fail(token.error);
           return fail(`Unknown tool: ${name}`);
         }
       }

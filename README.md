@@ -41,7 +41,13 @@ What your assistant can do with it:
 - **Web3**: game currencies as on-chain tokens and items as NFTs on EVM networks and Solana, player deposits
   and withdrawals through the reward pool, token-gated play and wallet login, networks, contract addresses and
   gas policy (`get_blockchain` / `save_blockchain`, crypto currencies in `save_currency`, NFT items in
-  `save_item`). Token launch and holder staking live on idosgames.com itself.
+  `save_item`).
+- **Launch a game token from any wallet** (`token:launch`, its own permission): `prepare_token_launch` makes the
+  game (or adds a token to your game) and reserves the token address; then either give the user the link to sign
+  in their own wallet, or let a wallet you control sign it (`build_token_launch_tx`, then `submit_launch_tx`).
+  The wallet that signs becomes the token creator. `get_launch_options` and `get_launch_status` read.
+- **Token market** (any game with a token, read-only): price or market cap, pool and bonding-curve progress, fees
+  (`get_token_market`), and a link where the user buys or sells with their own wallet (`prepare_token_trade`).
 - **Title data and localization keys**: the game's shared key-value data and its text keys.
 - **Server logic**: publish CloudCode, and list secret names (values are never returned).
 - **Generate assets with AI**: images, speech and sound, music, short videos, 3D models and text. Generation
@@ -114,9 +120,17 @@ Serves the iDos Games **Module & Skills Registry** to coding agents:
 | `list_skills` / `get_skill` | How to code against `@idosgames/core`, the module contract and composition |
 | `search` | Find a ready module by the feature you need |
 | `validate_asset` / `validate_video` | Check a video-studio asset or video package with the studio's own code; with `title_id` — the link that opens the video in the app |
+| `get_local_wallet` | Addresses of the wallets this server can sign with (keys stay local, never returned) |
+| `build_launch_tx` / `send_launch_tx` | Turn the hosted `build_token_launch_tx` answer into transactions for your wallet, or sign and send them with the local key |
+| `quote_token_trade` / `build_token_trade` / `send_token_trade` | Quote, build (unsigned) or sign and send a buy or sell of a game's token (EVM Uniswap V4, Solana) |
 
-All tools are read-only and return content. The agent writes the files into its own project. The registry is
-bundled in the package, so it also works offline.
+All registry tools are read-only and return content. The agent writes the files into its own project. The registry
+is bundled in the package, so it also works offline.
+
+Token tools sign only with a key you give this server in its environment, on your computer:
+`IDOSGAMES_EVM_PRIVATE_KEY` (or `IDOSGAMES_EVM_KEY_FILE`) and `IDOSGAMES_SOLANA_KEYPAIR` (path to a solana-keygen
+JSON file) or `IDOSGAMES_SOLANA_PRIVATE_KEY`. The key never leaves your computer and is never printed. Without a
+key, use the `build_*` tools and sign elsewhere.
 
 ```bash
 claude mcp add idosgames-sdk -- npx -y @idosgames/mcp
