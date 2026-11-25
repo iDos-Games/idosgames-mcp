@@ -51,8 +51,15 @@ export const VIDEO_TOOLS: Tool[] = [
     inputSchema: {
       type: "object",
       properties: {
-        package: { type: "object", description: "{ spec, assets } — a VideoSpec and the assets it uses." },
-        title_id: { type: "string", description: "The app with the video studio, for the link (optional)." },
+        package: {
+          type: "object",
+          description: "{ spec, assets } — a VideoSpec and the assets it uses.",
+        },
+        title_id: {
+          type: "string",
+          description:
+            "The app with the video studio, for the link (optional).",
+        },
       },
       required: ["package"],
     },
@@ -69,28 +76,64 @@ const TITLE_ID = /^([A-Z0-9]{8})(-DEV)?$/;
  */
 function titleOrigin(titleId: string): string | null {
   const m = TITLE_ID.exec(titleId);
-  return m ? `https://${m[1]!.toLowerCase()}${m[2] ? "-dev" : ""}.idos.games` : null;
+  return m
+    ? `https://${m[1]!.toLowerCase()}${m[2] ? "-dev" : ""}.idos.games`
+    : null;
 }
 
-export async function callVideoTool(name: string, args: Record<string, unknown> | undefined): Promise<Content | null> {
+export async function callVideoTool(
+  name: string,
+  args: Record<string, unknown> | undefined,
+): Promise<Content | null> {
   switch (name) {
     case "validate_asset": {
       const asset = args?.["asset"];
-      if (!asset || typeof asset !== "object") return { ok: false, error: "validate_asset requires an 'asset' object." };
+      if (!asset || typeof asset !== "object")
+        return {
+          ok: false,
+          error: "validate_asset requires an 'asset' object.",
+        };
       const issues = validateAsset(asset as Asset, { inline: true });
-      return { ok: true, value: { ok: !issues.some((i) => i.level === "error"), issues } };
+      return {
+        ok: true,
+        value: { ok: !issues.some((i) => i.level === "error"), issues },
+      };
     }
     case "validate_video": {
       const pkg = args?.["package"];
-      if (!pkg || typeof pkg !== "object") return { ok: false, error: "validate_video requires a 'package' object." };
+      if (!pkg || typeof pkg !== "object")
+        return {
+          ok: false,
+          error: "validate_video requires a 'package' object.",
+        };
       const r = readVideoPackage(pkg);
-      if (!r.ok) return { ok: true, value: { ok: false, error: r.error, issues: r.issues } };
-      const errors = r.issues.filter((i) => "level" in i && i.level === "error");
-      const dropped = (Array.isArray((pkg as { assets?: unknown }).assets) ? (pkg as { assets: unknown[] }).assets.length : 0) - r.value.assets.length;
-      const titleId = typeof args?.["title_id"] === "string" ? args["title_id"].trim() : "";
+      if (!r.ok)
+        return {
+          ok: true,
+          value: { ok: false, error: r.error, issues: r.issues },
+        };
+      const errors = r.issues.filter(
+        (i) => "level" in i && i.level === "error",
+      );
+      const dropped =
+        (Array.isArray((pkg as { assets?: unknown }).assets)
+          ? (pkg as { assets: unknown[] }).assets.length
+          : 0) - r.value.assets.length;
+      const titleId =
+        typeof args?.["title_id"] === "string" ? args["title_id"].trim() : "";
       const origin = titleId ? titleOrigin(titleId) : null;
-      const link = origin ? `${origin}/#videodata=${await encodeVideoPackage(r.value as VideoPackage)}` : null;
-      return { ok: true, value: { ok: errors.length === 0, issues: r.issues, droppedAssets: dropped, link } };
+      const link = origin
+        ? `${origin}/#videodata=${await encodeVideoPackage(r.value as VideoPackage)}`
+        : null;
+      return {
+        ok: true,
+        value: {
+          ok: errors.length === 0,
+          issues: r.issues,
+          droppedAssets: dropped,
+          link,
+        },
+      };
     }
     default:
       return null;
